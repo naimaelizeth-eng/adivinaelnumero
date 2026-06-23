@@ -139,6 +139,32 @@ def iniciar_juego():
     boton_comenzar.config(state="disabled")
     animacion(0)
 
+
+# Esta función crea una animación sencilla de texto usando Tkinter. 
+# Utiliza after() para actualizar la interfaz cada cierto tiempo. 
+# La función recibe un parámetro llamado paso.
+# Ese parámetro indica en qué momento de la animación se encuentra.
+#Por ejemplo:
+#animacion(0)
+#animacion(1)
+#animacion(2)
+#animacion(3)
+# Cada vez que la función se vuelve a llamar, paso aumenta en 1.
+# Los puntos que aparecen como cargando se generan aqui puntos = "." * (paso % 4), 
+# El operador % devuelve el residuo de una división. ejemplo 
+# paso      paso % 4
+# 0         0
+# 1         1
+# 2         2
+# 3         3
+# 4         0
+# 5         1
+# 6         2
+# 7         3
+# 8         0 ...
+# despues multiplica un texto en Python significa repetirlo "." * 2 = .. 
+# entonces se ve la animacion de los puntos cargando
+
 def animacion(paso):
 
     puntos = "." * (paso % 4)
@@ -181,19 +207,105 @@ def mostrar_interfaz_juego():
         fg="white"
     ).pack()
 
-    tk.Label(
+    # Entrada del número
+    global entrada_numero
+    global lbl_pista
+    global lbl_intentos
+
+    entrada_numero = tk.Entry(
         ventana,
-        text="(Aquí irá la lógica del juego)",
-        font=("Arial",15),
+        font=("Arial",16),
+        justify="center",
+        width=10
+    )
+    entrada_numero.pack(pady=15)
+
+    tk.Button(
+        ventana,
+        text="Intentar",
+        font=("Arial",13),
+        bg="#3498DB",
+        fg="white",
+        command=verificar_numero
+    ).pack()
+
+    lbl_pista = tk.Label(
+        ventana,
+        text="",
+        font=("Arial",16,"bold"),
         bg="#2C3E50",
-        fg="#58D68D"
-    ).pack(pady=50)
+        fg="white"
+    )
+
+    lbl_pista.pack(pady=20)
+    lbl_intentos = tk.Label(
+        ventana,
+        text="Intentos: 0",
+        font=("Arial",13),
+        bg="#2C3E50",
+        fg="white"
+    )
+
+    lbl_intentos.pack()
+
+    tk.Button(
+        ventana,
+        text="🔄 Reiniciar",
+        font=("Arial",12),
+        bg="#F39C12",
+        fg="white",
+        command=ventana_juego
+    ).pack(pady=10)
+
+    tk.Button(
+        ventana,
+        text="🏠 Menú Principal",
+        font=("Arial",12),
+        bg="#E74C3C",
+        fg="white",
+        command=menu_principal
+    ).pack()
+
+
+# Verificar numero: Lee el número que escribe el jugador, si es incorrecto aumenta
+# el numero de intentos, actualiza la pantalla, compara con el numero secreto generado
+# usando condiciones if elseif y else para los diferentes casos. mostrar pistas o mostrar si ganó 
+def verificar_numero():
+
+    global intentos
+    try:
+        numero = int(entrada_numero.get())
+    except:
+        lbl_pista.config(
+            text="Ingrese un número válido.",
+            fg="orange"
+        )
+        return
+    intentos += 1
+
+    lbl_intentos.config(
+        text=f"Intentos: {intentos}"
+    )
+
+    if numero > numero_secreto:
+        lbl_pista.config(
+            text="🔴 Muy Alto",
+            fg="red"
+        )
+    elif numero < numero_secreto:
+        lbl_pista.config(
+            text="🔵 Muy Bajo",
+            fg="deepskyblue"
+        )
+    else:
+        lbl_pista.config(
+            text=f"🎉 ¡GANASTE!\nIntentos: {intentos}",
+            fg="lime"
+        )
 
 # RESULTADOS
 def resultados():
-
     limpiar_ventana()
-
     tk.Label(
         ventana,
         text="RESULTADOS",
